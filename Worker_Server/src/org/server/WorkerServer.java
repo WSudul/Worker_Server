@@ -3,8 +3,8 @@ package org.server;
 import org.server.communication.Request;
 import org.server.communication.Response;
 import org.server.job.Job;
-import org.server.org.config.WorkerConfiguration;
-import org.server.org.config.WorkerServerConfiguration;
+import org.server.config.WorkerConfiguration;
+import org.server.config.WorkerServerConfiguration;
 import org.server.worker.Worker;
 
 import java.io.IOException;
@@ -15,13 +15,16 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.logging.Logger;
 
 
 public class WorkerServer implements Runnable {
+
+    //afaik according to SO - it's safe and desired to have 1 logger
+    private final static Logger logger = Logger.getLogger(WorkerServer.class.getName());
 
     private ServerSocket serverSocket;
     private List<WorkerConfiguration> workerConfigurations;
@@ -50,6 +53,9 @@ public class WorkerServer implements Runnable {
     @Override
     public void run() {
         //call looping method
+
+        logger.info("WorkerServer "+ this.name +" is started");
+
         handleSocket();
 
     }
@@ -67,6 +73,7 @@ public class WorkerServer implements Runnable {
         ObjectOutputStream objectOutputStream;
         //JsonReader jsonReader;
 
+        logger.info("WorkerServer "+ this.name +" is waiting for client");
         try {
             client=serverSocket.accept();  //only 1 connection allowed to serverSocket
             inputStream =client.getInputStream();
@@ -87,7 +94,8 @@ public class WorkerServer implements Runnable {
 
             Request request=new Request(new ArrayList<Job>());
 
-            FutureTask<Response>task=new FutureTask<Response>(new Worker(request));
+            //#TODO better config passing
+            FutureTask<Response>task=new FutureTask<Response>(new Worker(request,workerConfigurations.get(0)));
             executors.submit(task);
 
 

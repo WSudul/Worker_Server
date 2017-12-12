@@ -1,13 +1,16 @@
 import org.server.WorkerServer;
-import org.server.org.config.WorkerConfiguration;
-import org.server.org.config.WorkerConfigurationBuilder;
-import org.server.org.config.WorkerServerConfiguration;
+import org.server.config.WorkerConfiguration;
+import org.server.config.WorkerConfigurationBuilder;
+import org.server.config.WorkerServerConfiguration;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
+
 
 public class Main {
 
+    private final static Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String [ ] args){
 
@@ -26,8 +29,11 @@ public class Main {
 
         serverConfiguration.setWorkerConfigurations(workerConfigurations);
 
+        logger.info("Starting the WorkServer " + serverConfiguration.getName());
+
         WorkerServer workerServer=new WorkerServer(serverConfiguration);
 
+        workerServer.run();
 
     }
 }
