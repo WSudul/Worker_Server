@@ -1,4 +1,4 @@
-package org.server.calculations.statistics;
+package statistics;
 
 import java.util.ArrayList;
 import java.util.Map;
@@ -12,18 +12,22 @@ public class Occurences {
 
     int wanted_element;
 
-    public void setList(ArrayList<Integer> list) {
+    public void setList(ArrayList<Long> list) {
         this.list = list;
     }
 
-    ArrayList<Integer> list;
+    ArrayList<Long> list;
 
 
-    /* below function counts occurences of given wanted_element. returns number of occurences, or 0 if none*/
-    public static Long CalculateOccurences(ArrayList<Integer> list, int wanted_element) {
-        Map<Object, Long> counts = list.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
+    /* below function counts occurences of given wanted_element. returns number of occurences, 0 if none, or -1 if array empty*/
+    public static Long CalculateOccurences(ArrayList<Long> list, Long wanted_element) {
+        try{
+        Map<Object, Long> counts=counts=list.stream().collect(Collectors.groupingBy(e -> e, Collectors.counting()));
         Long count= counts.get(wanted_element);
-        if(count==null) return Long.valueOf(0);
-        return count;
+        return count;}
+        catch(java.lang.NullPointerException exception) {
+            System.out.println("Array is empty!!");
+        }
+        return-1L;
     }
 }

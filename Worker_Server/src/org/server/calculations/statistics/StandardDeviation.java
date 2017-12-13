@@ -1,17 +1,22 @@
-package org.server.calculations.statistics;
+package statistics;
 
 import java.util.ArrayList;
 
 public class StandardDeviation {
 
-    public void setList(ArrayList<Integer> list) {
+    public void setList(ArrayList<Long> list) {
         this.list = list;
     }
-    ArrayList<Integer> list;
+    ArrayList<Long> list;
 
-    static double CalculateStandardDeviation(ArrayList<Integer> list)
+    static double CalculateStandardDeviation(ArrayList<Long> list)
     {
-        if ((list == null) || list.isEmpty()) return -1;
-        return Math.sqrt(Variance.CalculateVariance(list));
+       try {
+           return Math.sqrt(Variance.CalculateVariance(list));
+       }
+       catch(java.lang.NullPointerException exception) {
+           System.out.println("Array is empty!!");
+       }
+        return Long.MAX_VALUE;
     }
 }

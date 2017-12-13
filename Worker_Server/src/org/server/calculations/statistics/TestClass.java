@@ -1,69 +1,69 @@
-package org.server.calculations.statistics;
+package statistics;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class TestClass {
-    public static ArrayList<Integer> lista = new ArrayList<>();
+    public static ArrayList<Long> lista = new ArrayList<>();
 
-    public static ArrayList<Integer> getLista() {
+    public static ArrayList<Long> getLista() {
         launch();
         return lista;
     }
 
     private static void launch() {
-      /*  for (int i = 0; i < 100; i++) {
+        for (long i = 0; i < 100; i++) {
             lista.add(i);
-            lista.add(1);
-        }*/
-      lista.add(2);
-              lista.add(5);
-                      lista.add(1);
-                              lista.add(3);
+            lista.add(1L);
+        }
+      /*lista.add(2L);
+              lista.add(5L);
+                      lista.add(1L);
+                              lista.add(3L);*/
     }
 
     public static void main(String[] args){
        /* below code can be used to test Occurences class*/
-       /*ArrayList<Integer> mylist= getLista();
+       /*ArrayList<Long> mylist= getLista();
         Occurences tempList = new Occurences();
         tempList.setList(mylist);
-        int wanted=67898765;
+        long wanted=67;
         System.out.println(Occurences.CalculateOccurences(mylist, wanted));*/
-
-        /* below code can be used to test MeanArithmetic class*/
-        /*ArrayList<Integer> mylist=getLista();//=null
+        /*MeanArithmetic*/
+        /*ArrayList<Long> mylist=getLista();//=null
         MeanArithmetic tempList = new MeanArithmetic();
         tempList.setList(mylist);
         System.out.println(MeanArithmetic.CalculateArithmeticMean(mylist));*/
-
         /*Median*/
-        /*ArrayList<Integer> mylist=getLista();//=null
+        /*ArrayList<Long> mylist=null;//getLista();//=null
         Median tempList = new Median();
         tempList.setList(mylist);
         System.out.println(Median.CalculateMedian(mylist));*/
-
         /*Variance*/
-        /*ArrayList<Integer> mylist=getLista();//=null
+        /*ArrayList<Long> mylist=getLista();//=null
         Variance tempList = new Variance();
         tempList.setList(mylist);
         System.out.println(Variance.CalculateVariance(mylist));*/
-
-        /*STandard Deviation*/
-        /*ArrayList<Integer> mylist=getLista();//=null
+        /*Standard Deviation*/
+        /*ArrayList<Long> mylist=getLista();//=null
         StandardDeviation tempList = new StandardDeviation();
         tempList.setList(mylist);
         System.out.println(StandardDeviation.CalculateStandardDeviation(mylist));*/
-
-
-        /*Ola TO DO TUESDAY:
-        check calculations
-        add means (to functions, not to life)
-        max
-        min
-        dominanty
-        kwantyle
-        makarena
-         */
+        /*Min*/
+        /*ArrayList<Long> mylist=getLista();//=null
+        Min tempList = new Min();
+        tempList.setList(mylist);
+        System.out.println(Min.CalculateMin(mylist));*/
+        /*max*/
+        /*ArrayList<Long> mylist=getLista();//=null
+        Max tempList = new Max();
+        tempList.setList(mylist);
+        System.out.println(Max.CalculateMax(mylist));*/
+        /*MeanGeometric*/
+        /*ArrayList<Long> mylist=getLista();//=null
+        MeanGeometric tempList = new MeanGeometric();
+        tempList.setList(mylist);
+        System.out.println(MeanGeometric.CalculateGeometricMean(mylist));*/
 
 
 

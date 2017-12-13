@@ -1,11 +1,10 @@
-package org.server.calculations.statistics;
+package statistics;
 
-import java.util.Collections;
 import java.util.Comparator;
 
-public class CustomComparator implements Comparator<Integer> {
+public class CustomComparator implements Comparator<Long> {
     @Override
-    public int compare(Integer o1, Integer o2) {
+    public int compare(Long o1, Long o2) {
         return 0;
     }
 }
