@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 import java.util.logging.Logger;
 
@@ -86,17 +87,23 @@ public class WorkerServer implements Runnable {
         }
 
 
+        List<Future<Response>> futureResponses=new Array;
+
         while(shouldLive){
 
 
 
             //#TODO - use java EE JsonReader + create a shared container (LIFO ) to give response
 
+            //reading and writing needs to be synchronized!
+
             Request request=new Request(new ArrayList<Job>());
 
             //#TODO better config passing
-            FutureTask<Response>task=new FutureTask<Response>(new Worker(request,workerConfigurations.get(0)));
-            executors.submit(task);
+            Worker workerCallable=new Worker(request,workerConfigurations.get(0));
+
+
+            Future<Response> responseFuture=executors.submit(workerCallable);
 
 
 
