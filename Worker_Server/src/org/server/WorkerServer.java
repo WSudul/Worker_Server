@@ -14,11 +14,10 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 
@@ -87,7 +86,8 @@ public class WorkerServer implements Runnable {
         }
 
 
-        List<Future<Response>> futureResponses=new Array;
+        //#TODO implement pooling method
+        List<Future<Response>> futureResponses=new LinkedList<>();
 
         while(shouldLive){
 
@@ -101,13 +101,32 @@ public class WorkerServer implements Runnable {
 
             //#TODO better config passing
             Worker workerCallable=new Worker(request,workerConfigurations.get(0));
+            futureResponses.add(executors.submit(workerCallable));
 
 
-            Future<Response> responseFuture=executors.submit(workerCallable);
 
 
+            //implement pooling throught futureResponses and send response when isDone() returns true;
+            Iterator<Future<Response>> iterator=futureResponses.iterator();
+            while(iterator.hasNext()){
+                Future<Response> response=iterator.next();
+                if(response.isDone())
+                {
+                    try {
+                        Response result=response.get();
+                        iterator.remove();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    } catch (ExecutionException e) {
+                        e.printStackTrace();
+                    }
+                }else{
+                    //skip or try waiting for short time ?
+                }
 
-            //implement logic
+
+            }
+
         }
 
 
