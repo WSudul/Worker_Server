@@ -1,50 +1,49 @@
 package org.server;
 
+import com.sun.net.httpserver.HttpServer;
 import org.server.communication.Request;
 import org.server.communication.Response;
-import org.server.job.Job;
 import org.server.config.WorkerConfiguration;
 import org.server.config.WorkerServerConfiguration;
+import org.server.job.Job;
 import org.server.worker.Worker;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.net.InetSocketAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.logging.Logger;
 
 
 public class WorkerServer implements Runnable {
 
-    //afaik according to SO - it's safe and desired to have 1 logger
-    private final static Logger logger = Logger.getLogger(WorkerServer.class.getName());
 
-    private ServerSocket serverSocket;
+    private final static Logger logger = Logger.getLogger(WorkerServer.class.getName());
+    ExecutorService executors;
     private List<WorkerConfiguration> workerConfigurations;
     private String name;
-    ExecutorService executors;
-    private int workerPoolSize=3;
-
+    private int workerPoolSize = 3;
+    private int serverPoolSize = 5;
+    private Integer port = 8080;
 
     public WorkerServer(WorkerServerConfiguration configuration){
 
         this.name=configuration.getName();
         workerConfigurations=  configuration.getWorkerConfigurations();
-            try {
-                serverSocket=new ServerSocket(configuration.getSocket());
-            } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println(name + " " + e.getMessage());
 
+        this.port = configuration.getSocket();
 
-            }
 
         workerPoolSize=workerConfigurations.size();
 
@@ -56,13 +55,38 @@ public class WorkerServer implements Runnable {
 
         logger.info("WorkerServer "+ this.name +" is started");
 
-        handleSocket();
+
+        InetSocketAddress socketAddress = new InetSocketAddress("127.0.0.1", port);
+        ErrorHandler errorHandler = new ErrorHandler();
+        RequestHandler requestHandler = new RequestHandler(errorHandler, executors);
+
+        try {
+            HttpServer httpServer = HttpServer.create(socketAddress, 0);
+            httpServer.createContext("/request", requestHandler);
+            httpServer.createContext("/", errorHandler);
+            httpServer.setExecutor(Executors.newFixedThreadPool(serverPoolSize));
+            httpServer.start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+        //handleRequests();
 
     }
 
 
-    private void handleSocket(){
+    //old implementation for socket - should be moved to handle http requests
+    private void handleRequests() {
+        ServerSocket serverSocket = null;
+        try {
+            serverSocket = new ServerSocket(port);
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.out.println(name + " " + e.getMessage());
 
+
+        }
         //make it thread safe variable
         boolean shouldLive=true;
 
@@ -92,7 +116,6 @@ public class WorkerServer implements Runnable {
         while(shouldLive){
 
 
-
             //#TODO - use java EE JsonReader + create a shared container (LIFO ) to give response
 
             //reading and writing needs to be synchronized!
@@ -104,14 +127,11 @@ public class WorkerServer implements Runnable {
             futureResponses.add(executors.submit(workerCallable));
 
 
-
-
             //implement pooling throught futureResponses and send response when isDone() returns true;
             Iterator<Future<Response>> iterator=futureResponses.iterator();
             while(iterator.hasNext()){
                 Future<Response> response=iterator.next();
-                if(response.isDone())
-                {
+                if(response.isDone()) {
                     try {
                         Response result=response.get();
                         iterator.remove();
