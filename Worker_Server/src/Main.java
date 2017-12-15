@@ -3,6 +3,8 @@ import org.server.config.WorkerConfiguration;
 import org.server.config.WorkerConfigurationBuilder;
 import org.server.config.WorkerServerConfiguration;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -17,7 +19,13 @@ public class Main {
         WorkerServerConfiguration serverConfiguration=new WorkerServerConfiguration();
 
         serverConfiguration.setName("WorkerServer-1");
-        serverConfiguration.setSocket(8080);
+        try {
+            serverConfiguration.setInetAddress(InetAddress.getLocalHost());
+        } catch (UnknownHostException e) {
+            logger.severe("Configuration setup failed. Could not resolve InetAddress "
+                    + e.getMessage());
+        }
+        serverConfiguration.setPort(8080);
 
         List<WorkerConfiguration> workerConfigurations;
         workerConfigurations = new ArrayList<WorkerConfiguration>();

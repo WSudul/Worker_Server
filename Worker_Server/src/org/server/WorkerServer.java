@@ -12,17 +12,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
-import java.net.InetSocketAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.net.*;
+import java.util.*;
+import java.util.concurrent.*;
 import java.util.logging.Logger;
 
 
@@ -31,21 +23,37 @@ public class WorkerServer implements Runnable {
 
     private final static Logger logger = Logger.getLogger(WorkerServer.class.getName());
     ExecutorService executors;
-    private List<WorkerConfiguration> workerConfigurations;
-    private String name;
-    private int workerPoolSize = 3;
+    private List<WorkerConfiguration> workerConfigurations = new ArrayList<>
+            (Arrays.asList(new WorkerConfiguration("Worker", TimeUnit.SECONDS, 10, 3)));
+    private String name = "Worker-Server";
+    private int workerPoolSize = 1;
     private int serverPoolSize = 5;
+    private InetAddress inetAddress;
     private Integer port = 8080;
 
-    public WorkerServer(WorkerServerConfiguration configuration){
+    public WorkerServer(WorkerServerConfiguration configuration) {
 
-        this.name=configuration.getName();
-        workerConfigurations=  configuration.getWorkerConfigurations();
+        if (configuration.getName().isPresent())
+            this.name = configuration.getName().get();
 
-        this.port = configuration.getSocket();
+        if (configuration.getWorkerConfigurations().isPresent())
+            workerConfigurations = configuration.getWorkerConfigurations().get();
 
+        if (configuration.getInetAddress().isPresent())
+            this.inetAddress = configuration.getInetAddress().get();
+        else {
+            try {
+                this.inetAddress = InetAddress.getByName("127.0.0.1");
+            } catch (UnknownHostException e) {
+                logger.severe("Unable to create InetAddress:" + e.getMessage());
+            }
+        }
+        if (configuration.getPort().isPresent())
+            this.port = configuration.getPort().get();
 
         workerPoolSize=workerConfigurations.size();
+
+        logger.info("Created WorkerServer with name: " + this.name + " address:" + this.inetAddress.getHostAddress());
 
     }
 
@@ -53,10 +61,10 @@ public class WorkerServer implements Runnable {
     public void run() {
         //call looping method
 
-        logger.info("WorkerServer "+ this.name +" is started");
+        logger.info("WorkerServer " + this.name + " thread is started: " + Thread.currentThread().getName());
 
 
-        InetSocketAddress socketAddress = new InetSocketAddress("127.0.0.1", port);
+        InetSocketAddress socketAddress = new InetSocketAddress(inetAddress, port);
         ErrorHandler errorHandler = new ErrorHandler();
         RequestHandler requestHandler = new RequestHandler(errorHandler, executors);
 

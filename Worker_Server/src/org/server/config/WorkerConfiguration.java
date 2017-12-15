@@ -1,53 +1,38 @@
 package org.server.config;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 public class WorkerConfiguration {
 
 
-    private String name;
-    private TimeUnit timeoutUnit;
-    private int executorShutdownTimeout;
-    private int threadPoolSize;
+    private Optional<String> name;
+    private Optional<TimeUnit> timeoutUnit;
+    private Optional<Integer> executorShutdownTimeout;
+    private Optional<Integer> threadPoolSize;
 
 
     public WorkerConfiguration(String name, TimeUnit timeoutUnit, int executorShutdownTimeout, int threadPoolSize) {
-        this.name = name;
-        this.timeoutUnit = timeoutUnit;
-        this.executorShutdownTimeout = executorShutdownTimeout;
-        this.threadPoolSize = threadPoolSize;
+        this.name = Optional.ofNullable(name);
+        this.timeoutUnit = Optional.ofNullable(timeoutUnit);
+        this.executorShutdownTimeout = Optional.ofNullable(executorShutdownTimeout);
+        this.threadPoolSize = Optional.ofNullable(threadPoolSize);
     }
 
-    public int getExecutorShutdownTimeout() {
+    public Optional<Integer> getExecutorShutdownTimeout() {
         return executorShutdownTimeout;
     }
 
-    public void setExecutorShutdownTimeout(int executorShutdownTimeout) {
-        this.executorShutdownTimeout = executorShutdownTimeout;
-    }
-
-
-    public String getName() {
+    public Optional<String> getName() {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public TimeUnit getTimeoutUnit() {
+    public Optional<TimeUnit> getTimeoutUnit() {
         return timeoutUnit;
     }
 
-    public void setTimeoutUnit(TimeUnit timeoutUnit) {
-        this.timeoutUnit = timeoutUnit;
-    }
-
-    public int getThreadPoolSize() {
+    public Optional<Integer> getThreadPoolSize() {
         return threadPoolSize;
     }
 
-    public void setThreadPoolSize(int threadPoolSize) {
-        this.threadPoolSize = threadPoolSize;
-    }
 }

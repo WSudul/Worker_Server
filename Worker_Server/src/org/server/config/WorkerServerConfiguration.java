@@ -1,47 +1,64 @@
 package org.server.config;
 
+import java.net.InetAddress;
 import java.util.List;
+import java.util.Optional;
 
 public class WorkerServerConfiguration {
 
-    private String name;
-    private Integer socket;
-    private List<WorkerConfiguration> workerConfigurations;
+    private Optional<String> name;
+    private Optional<InetAddress> inetAddress;
+    private Optional<Integer> port;
+    private Optional<Integer> serverThreadPoolSize;
+    private Optional<List<WorkerConfiguration>> workerConfigurations;
 
     public WorkerServerConfiguration(){}
 
-    public WorkerServerConfiguration(String name, Integer socket, List<WorkerConfiguration> workerConfigurations) {
-        this.name = name;
-        this.socket = socket;
-        this.workerConfigurations = workerConfigurations;
+    public WorkerServerConfiguration(String name, InetAddress inetAddress, Integer port, Integer serverThreadPoolSize, List<WorkerConfiguration> workerConfigurations) {
+        this.name = Optional.ofNullable(name);
+        this.inetAddress = Optional.ofNullable(inetAddress);
+        this.port = Optional.ofNullable(port);
+        this.serverThreadPoolSize = Optional.ofNullable(serverThreadPoolSize);
+        this.workerConfigurations = Optional.ofNullable(workerConfigurations);
     }
 
-    public String getName() {
+    public Optional<String> getName() {
         return name;
     }
 
     public void setName(String name) {
-        this.name = name;
+        this.name = Optional.ofNullable(name);
     }
 
-    public Integer getSocket() {
-        return socket;
+    public Optional<Integer> getPort() {
+        return port;
     }
 
-    public void setSocket(Integer socket) {
-        this.socket = socket;
+    public void setPort(Integer port) {
+        this.port = Optional.ofNullable(port);
     }
 
-    public List<WorkerConfiguration> getWorkerConfigurations() {
+    public Optional<List<WorkerConfiguration>> getWorkerConfigurations() {
         return workerConfigurations;
     }
 
     public void setWorkerConfigurations(List<WorkerConfiguration> workerConfigurations) {
-        this.workerConfigurations = workerConfigurations;
+        this.workerConfigurations = Optional.ofNullable(workerConfigurations);
     }
 
+    public Optional<InetAddress> getInetAddress() {
+        return inetAddress;
+    }
 
+    public void setInetAddress(InetAddress inetAddress) {
+        this.inetAddress = Optional.ofNullable(inetAddress);
+    }
 
+    public Optional<Integer> getServerThreadPoolSize() {
+        return serverThreadPoolSize;
+    }
 
-
+    public void setServerThreadPoolSize(Integer serverThreadPoolSize) {
+        this.serverThreadPoolSize = Optional.ofNullable(serverThreadPoolSize);
+    }
 }
